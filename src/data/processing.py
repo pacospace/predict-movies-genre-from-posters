@@ -17,19 +17,16 @@
 
 """Processing code."""
 
-import tqdm
+from tqdm import tqdm
 import numpy as np
 
-from .base_component import BaseComponent
 from .data_handler import AnnotationsData
 from .data_handler import ImagesData
-from src.configuration import Configuration
 
-from sklearn.model_selection import train_test_split
 from keras.preprocessing import image
 
 
-class Processing(BaseComponent):
+class Processing:
     """Base class for processing methods."""
 
     @staticmethod
@@ -39,23 +36,24 @@ class Processing(BaseComponent):
         img = image.img_to_array(img)
 
         # Normalize image
-        img = img/255
+        img = img / 255
 
         return img
 
-    @staticmethod
-    def process_dataset():
+    def process_dataset(self):
         """Process data."""
         annotations_df = AnnotationsData.retrieve_annotations_dataframe()
         train_image = []
 
-        for i in tqdm(range(annotations_df.shape[0])):
+        number_rows = annotations_df.shape[0]
+
+        for i in tqdm(range(number_rows)):
             traid_id = annotations_df.iloc[i]["Id"]
             image = ImagesData.retrieve_image(traid_id=traid_id)
-            processed_image = Processing.process_image(image)
+            processed_image = self.process_image(image)
             train_image.append(processed_image)
 
-        X = np.array(train_image)
-        y = np.array(annotations_df.drop(['Id', 'Genre'],axis=1))
+        inputs = np.array(train_image)
+        y = np.array(annotations_df.drop(["Id", "Genre"], axis=1))
 
-        return X, y
+        return inputs, y

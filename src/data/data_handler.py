@@ -32,8 +32,8 @@ class ImagesData(BaseComponent):
         """Retrieve image file."""
         # Get a A PIL Image instance.
         img = image.load_img(
-            str(Configuration.BASE_IMAGE_FOLDER) + '/' + traid_id + '.jpg',
-            target_size=Configuration.INPUT_IMAGE_SIZE
+            str(Configuration.BASE_IMAGE_FOLDER) + "/" + traid_id + ".jpg",
+            target_size=Configuration.INPUT_IMAGE_SIZE,
         )
         return img
 

@@ -19,6 +19,7 @@
 
 from src.configuration import Configuration
 
+from tqdm.keras import TqdmCallback
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
@@ -63,16 +64,20 @@ class Training:
         """Show moodel summary."""
         self.cnn_model.summary()
 
-    def train_model(self, X_train, y_train, X_test, y_test, epochs, batch_size):
+    def train_model(
+        self, x_train, y_train, x_test, y_test, epochs, batch_size, verbose
+    ):
         """Train model."""
         self.cnn_model.compile(
             optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]
         )
 
         self.cnn_model.fit(
-            X_train,
+            x_train,
             y_train,
             epochs=epochs,
-            validation_data=(X_test, y_test),
-            batch_size=batch_size
+            validation_data=(x_test, y_test),
+            batch_size=batch_size,
+            verbose=0,
+            callbacks=[TqdmCallback(verbose=2)],
         )

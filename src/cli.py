@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# 
+#
 # Copyright(C) 2021 Francesco Murdaca
 #
 # This program is free software: you can redistribute it and / or modify
@@ -33,7 +33,7 @@ from src.models.train_model import Training
 @click.group()
 @click.pass_context
 def cli(ctx: click.Context):
-    """Main command line interface."""
+    """Run main command line interface."""
     logger = logging.getLogger(__name__)
     logger.info("Run Predict Movies Genre From Poster Images.")
 
@@ -53,36 +53,37 @@ def visualize() -> None:
     training.show_model()
 
 
-@cli.command("training")
+@cli.command("train")
 @click.option(
     "--epochs",
+    default=10,
     type=int,
     help="Set epochs for training.",
 )
-def train(epochs) -> None:
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    envvar="THOTH_PRESCRIPTIONS_REFRESH_DEBUG",
+    help="Be verbose about what's going on.",
+)
+def train(epochs: int, verbose: bool = False) -> None:
     """Train model."""
-    X, y = Processing.process_dataset()
-    X_train, X_test, y_train, y_test = train_test_split(
-        X,
-        y,
-        random_state=Configuration.SEED,
-        test_size=0.1
+    click.echo(f"Selected {epochs} epochs for training.")
+    processing = Processing()
+    inputs, y = processing.process_dataset()
+
+    x_train, x_test, y_train, y_test = train_test_split(
+        inputs, y, random_state=Configuration.SEED, test_size=0.1
     )
+
     training = Training()
     training.train_model(
-        X_train,
-        X_test,
-        y_train,
-        y_test,
-        epochs=epochs,
-        batch_size=64
+        x_train, x_test, y_train, y_test, epochs=epochs, batch_size=64, verbose=verbose
     )
-
-
 
 
 if __name__ == "__main__":
     log_fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     logging.basicConfig(level=logging.INFO, format=log_fmt)
-
     cli()
