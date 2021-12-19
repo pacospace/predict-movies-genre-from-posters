@@ -37,3 +37,4 @@ class Configuration:
     # Training config
     SEED = 42
     INPUT_IMAGE_SIZE = (400, 400, 3)
+    TB_LOGS = CHECKPOINT_FOLDER / "logs/scalars/"

@@ -20,7 +20,6 @@
 from tqdm import tqdm
 import numpy as np
 
-from .data_handler import AnnotationsData
 from .data_handler import ImagesData
 
 from keras.preprocessing import image
@@ -40,20 +39,19 @@ class Processing:
 
         return img
 
-    def process_dataset(self):
+    def process_dataset(self, df):
         """Process data."""
-        annotations_df = AnnotationsData.retrieve_annotations_dataframe()
         train_image = []
 
-        number_rows = annotations_df.shape[0]
+        number_rows = df.shape[0]
 
         for i in tqdm(range(number_rows)):
-            traid_id = annotations_df.iloc[i]["Id"]
+            traid_id = df.iloc[i]["Id"]
             image = ImagesData.retrieve_image(traid_id=traid_id)
             processed_image = self.process_image(image)
             train_image.append(processed_image)
 
         inputs = np.array(train_image)
-        y = np.array(annotations_df.drop(["Id", "Genre"], axis=1))
+        y = np.array(df.drop(["Id", "Genre"], axis=1))
 
         return inputs, y

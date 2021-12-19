@@ -17,9 +17,14 @@
 
 """Training model code."""
 
+from datetime import datetime
+import random
+import keras
+import tensorflow as tf
+from keras_tqdm import TQDMCallback
+
 from src.configuration import Configuration
 
-from tqdm.keras import TqdmCallback
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
@@ -27,6 +32,8 @@ from keras.layers import Conv2D, MaxPooling2D
 
 class Training:
     """Base class for training methods."""
+
+    NUMBER_OF_CLASSES = 25
 
     def __init__(self) -> None:
         """init."""
@@ -55,7 +62,7 @@ class Training:
         model.add(Dropout(0.5))
         model.add(Dense(64, activation="relu"))
         model.add(Dropout(0.5))
-        model.add(Dense(25, activation="sigmoid"))
+        model.add(Dense(self.NUMBER_OF_CLASSES, activation="sigmoid"))
 
         # MNIST dataset parameters.
         self.cnn_model = model
@@ -68,16 +75,40 @@ class Training:
         self, x_train, y_train, x_test, y_test, epochs, batch_size, verbose
     ):
         """Train model."""
+        logdir = (
+            str(Configuration.TB_LOGS) + "/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+        )
+        tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir)
+
         self.cnn_model.compile(
             optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]
         )
 
-        self.cnn_model.fit(
+        print("Start fitting model...")
+        training_history = self.cnn_model.fit(
             x_train,
             y_train,
             epochs=epochs,
             validation_data=(x_test, y_test),
             batch_size=batch_size,
             verbose=0,
-            callbacks=[TqdmCallback(verbose=2)],
+            callbacks=[tensorboard_callback, TQDMCallback()],
+        )
+
+        return training_history
+
+    def save_model(self, prefix: str):
+        """Save trained model."""
+        time_version = (
+            f"{prefix}-{datetime.now():%y%m%d%H%M%S}-{random.getrandbits(64):08x}"
+        )
+
+        tf.keras.models.save_model(
+            self.cnn_model,
+            f"{Configuration.CHECKPOINT_FOLDER}/{time_version}/",
+            overwrite=True,
+            include_optimizer=True,
+            save_format=None,
+            signatures=None,
+            options=None,
         )

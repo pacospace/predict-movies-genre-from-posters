@@ -20,7 +20,6 @@
 import click
 import logging
 
-from sklearn.model_selection import train_test_split
 from src.configuration import Configuration
 
 from src.data.data_handler import AnnotationsData
@@ -70,17 +69,39 @@ def visualize() -> None:
 def train(epochs: int, verbose: bool = False) -> None:
     """Train model."""
     click.echo(f"Selected {epochs} epochs for training.")
+    annotations_df = AnnotationsData.retrieve_annotations_dataframe()
+    training_data_df = annotations_df.sample(frac=0.8, random_state=Configuration.SEED)
+
+    testing_data_df = annotations_df.drop(training_data_df.index)
+
     processing = Processing()
-    inputs, y = processing.process_dataset()
 
-    x_train, x_test, y_train, y_test = train_test_split(
-        inputs, y, random_state=Configuration.SEED, test_size=0.1
-    )
+    click.echo("Processing train data...")
+    x_train, y_train = processing.process_dataset(df=training_data_df)
 
+    click.echo(f"Inputs Train size: {x_train.shape}")
+    click.echo(f"Labels Train size: {y_train.shape}")
+
+    click.echo("Processing test data...")
+    x_test, y_test = processing.process_dataset(df=testing_data_df)
+    click.echo(f"Inputs Test size: {x_test.shape}")
+    click.echo(f"Labels Test size: {y_test.shape}")
+
+    click.echo("Starting training step...")
     training = Training()
-    training.train_model(
-        x_train, x_test, y_train, y_test, epochs=epochs, batch_size=64, verbose=verbose
+    training_history = training.train_model(
+        x_train,
+        y_train,
+        x_test,
+        y_test,
+        epochs=epochs,
+        batch_size=64,
+        verbose=int(verbose),
     )
+
+    training.save_model(prefix="tf")
+
+    Visualization.visualize_training_history(training_history)
 
 
 if __name__ == "__main__":
