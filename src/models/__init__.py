@@ -17,8 +17,10 @@
 
 """Training/Inference module."""
 
+from .predict_model import Inference
 from .train_model import Training
 
 __all__ = [
+    "Inference",
     "Training",
 ]

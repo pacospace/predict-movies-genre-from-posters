@@ -27,6 +27,7 @@ from src.data.data_handler import ImagesData
 from src.data.processing import Processing
 from src.visualization import Visualization
 from src.models.train_model import Training
+from src.models.predict_model import Inference
 
 
 @click.group()
@@ -70,7 +71,7 @@ def train(epochs: int, verbose: bool = False) -> None:
     """Train model."""
     click.echo(f"Selected {epochs} epochs for training.")
     annotations_df = AnnotationsData.retrieve_annotations_dataframe()
-    training_data_df = annotations_df.sample(frac=0.8, random_state=Configuration.SEED)
+    training_data_df = annotations_df.sample(frac=0.9, random_state=Configuration.SEED)
 
     testing_data_df = annotations_df.drop(training_data_df.index)
 
@@ -102,6 +103,37 @@ def train(epochs: int, verbose: bool = False) -> None:
     training.save_model(prefix="tf")
 
     Visualization.visualize_training_history(training_history)
+
+
+@cli.command("predict")
+@click.option(
+    "--model-name",
+    type=str,
+    required=True,
+    help="Model to be used for predictions.",
+)
+@click.option(
+    "--image-name",
+    type=str,
+    required=True,
+    help="Image name input to predict genre.",
+)
+def predict(model_name: str, image_name: str) -> None:
+    """Predict from model."""
+    click.echo("Loading Inference model...")
+    model = Inference(model_name=model_name)
+
+    click.echo("Retrieving image...")
+    annotations_df = AnnotationsData.retrieve_annotations_dataframe()
+    classes = [c for c in annotations_df.iloc[0].index if c not in ["Id", "Genre"]]
+    click.echo(f"List of genre considered: {classes}")
+
+    image = ImagesData.retrieve_external_image(image_name)
+
+    Visualization.visualize_image(image_array=image)
+
+    click.echo(f"Getting predictions from model {model.model_version}")
+    model.predict(image, classes)
 
 
 if __name__ == "__main__":

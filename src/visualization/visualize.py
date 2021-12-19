@@ -36,8 +36,9 @@ class Visualization(BaseComponent):
     def visualize_training_history(training_history):
         """Visualize training history."""
         print("Average test loss: ", np.average(training_history.history["loss"]))
+
         # list all data in history
-        print(training_history.history.keys())
+        # print(training_history.history.keys())
 
         # summarize history for accuracy
         plt.plot(training_history.history["accuracy"])

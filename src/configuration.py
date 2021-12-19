@@ -28,6 +28,7 @@ class Configuration:
     CONFIG_FOLDER = ROOT
     CHECKPOINT_FOLDER = ROOT / "models"
     DATA_FOLDER = ROOT / "data"
+    EXTERNAL_DATA_FOLDER = DATA_FOLDER / "external"
     PROCCESED_DATA_FOLDER = DATA_FOLDER / "processed"
 
     # Dataset config

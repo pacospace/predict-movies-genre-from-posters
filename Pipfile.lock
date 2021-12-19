@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c0cdf6ae3084d1cb312adf1be245666f6bedf14f4471c923da184529ec2bc611"
+            "sha256": "30340e3b82813f5df2270af11b9be630f9ae29fad757def9a79a68f10cd36d19"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -79,11 +79,11 @@
         },
         "fonttools": {
             "hashes": [
-                "sha256:581a682a7102a41421e7e484303572c565c1b8e52b1cc9fecd3c159dbe9a02f4",
-                "sha256:9934e3587dd5abf4e7f1d7176bcf0373db3f0ed728edf79791a9d2a7e664aac9"
+                "sha256:545c05d0f7903a863c2020e07b8f0a57517f2c40d940bded77076397872d14ca",
+                "sha256:edf251d5d2cc0580d5f72de4621c338d8c66c5f61abb50cf486640f73c8194d5"
             ],
             "markers": "python_version >= '3.7'",
-            "version": "==4.28.4"
+            "version": "==4.28.5"
         },
         "gast": {
             "hashes": [
@@ -226,14 +226,6 @@
                 "sha256:add82567c50c8bc648c14195bf544a5ce7c1f76761536956c3d2978970179ef3"
             ],
             "version": "==1.1.2"
-        },
-        "keras-tqdm": {
-            "hashes": [
-                "sha256:3f5b093d49852fc4c9bfeffdc17c8f3eb98b1e530dbd8cc407cf37d197a1dc3b",
-                "sha256:d5deb3bd201a66285fb796f240e6fb52ecb76fe6253bb72d6bb832abebe59f47"
-            ],
-            "index": "pypi",
-            "version": "==2.0.1"
         },
         "kiwisolver": {
             "hashes": [

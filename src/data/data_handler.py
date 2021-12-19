@@ -37,6 +37,17 @@ class ImagesData(BaseComponent):
         )
         return img
 
+    @staticmethod
+    def retrieve_external_image(image_name: str):
+        """Retrieve external image file."""
+        # Get a A PIL Image instance.
+        img = image.load_img(
+            str(Configuration.EXTERNAL_DATA_FOLDER) + "/" + image_name,
+            target_size=Configuration.INPUT_IMAGE_SIZE,
+        )
+
+        return img
+
 
 class AnnotationsData(BaseComponent):
     """Base class for annotations data handling."""

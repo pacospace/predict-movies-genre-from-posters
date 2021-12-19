@@ -21,7 +21,7 @@ from datetime import datetime
 import random
 import keras
 import tensorflow as tf
-from keras_tqdm import TQDMCallback
+from tqdm.keras import TqdmCallback
 
 from src.configuration import Configuration
 
@@ -92,7 +92,7 @@ class Training:
             validation_data=(x_test, y_test),
             batch_size=batch_size,
             verbose=0,
-            callbacks=[tensorboard_callback, TQDMCallback()],
+            callbacks=[tensorboard_callback, TqdmCallback(verbose=2)],
         )
 
         return training_history
