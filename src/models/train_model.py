@@ -81,7 +81,9 @@ class Training:
         tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir)
 
         self.cnn_model.compile(
-            optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]
+            optimizer="adam",
+            loss="binary_crossentropy",
+            metrics=["accuracy"]
         )
 
         print("Start fitting model...")

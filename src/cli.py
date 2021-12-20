@@ -61,25 +61,34 @@ def visualize() -> None:
     help="Set epochs for training.",
 )
 @click.option(
+    "--fraction",
+    default=0.88,
+    type=float,
+    help="Fraction to be used to split train/test dataset.",
+)
+@click.option(
+    "--batch-size",
+    default=64,
+    type=int,
+    help="Batch size for training.",
+)
+@click.option(
     "-v",
     "--verbose",
     is_flag=True,
     envvar="THOTH_PRESCRIPTIONS_REFRESH_DEBUG",
     help="Be verbose about what's going on.",
 )
-def train(epochs: int, verbose: bool = False) -> None:
+def train(epochs: int, fraction: float, batch_size: int, verbose: bool = False) -> None:
     """Train model."""
     click.echo(f"Selected {epochs} epochs for training.")
     annotations_df = AnnotationsData.retrieve_annotations_dataframe()
-    training_data_df = annotations_df.sample(frac=0.9, random_state=Configuration.SEED)
-
+    training_data_df = annotations_df.sample(frac=fraction, random_state=Configuration.SEED)
     testing_data_df = annotations_df.drop(training_data_df.index)
 
     processing = Processing()
-
     click.echo("Processing train data...")
     x_train, y_train = processing.process_dataset(df=training_data_df)
-
     click.echo(f"Inputs Train size: {x_train.shape}")
     click.echo(f"Labels Train size: {y_train.shape}")
 
@@ -96,12 +105,11 @@ def train(epochs: int, verbose: bool = False) -> None:
         x_test,
         y_test,
         epochs=epochs,
-        batch_size=64,
+        batch_size=batch_size,
         verbose=int(verbose),
     )
 
     training.save_model(prefix="tf")
-
     Visualization.visualize_training_history(training_history)
 
 
@@ -129,9 +137,7 @@ def predict(model_name: str, image_name: str) -> None:
     click.echo(f"List of genre considered: {classes}")
 
     image = ImagesData.retrieve_external_image(image_name)
-
     Visualization.visualize_image(image_array=image)
-
     click.echo(f"Getting predictions from model {model.model_version}")
     model.predict(image, classes)
 

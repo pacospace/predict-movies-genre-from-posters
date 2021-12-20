@@ -41,7 +41,9 @@ class Inference:
         # Default is TensorFlow model
         processed_image = Processing.process_image(image)
         prediction = self.model.predict(np.array([processed_image]))
+        print(prediction)
         top_3 = np.argsort(prediction[0])[:-4:-1]
+        print(top_3)
 
         for i in range(3):
             print(
